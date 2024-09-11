@@ -6,6 +6,10 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <div className="statistics">
+      <p>good {good}</p>
+      <p>neutral {neutral}</p>
+      <p>bad {bad}</p>
+      <p>all {good + neutral + bad}</p>
       <p>average {average(good, neutral, bad)}</p>
       <p>positive {positive(good, neutral, bad)}%</p>
     </div>
@@ -26,11 +30,10 @@ const App = () => {
       <button onClick={() => setBad(bad+1)}>bad</button>
 
       <h1>statistics</h1>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      { good + neutral + bad > 0 && <Statistics good={good} neutral={neutral} bad={bad} /> }
+      { good + neutral + bad > 0 ? 
+        <Statistics good={good} neutral={neutral} bad={bad} /> 
+        : <p>No feedback given</p>
+      }
     </div>
   )
 }
