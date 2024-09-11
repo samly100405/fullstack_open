@@ -1,40 +1,61 @@
-import { useState } from "react"
+import { useState } from 'react'
 
-const Statistics = ({ good, neutral, bad }) => {
-  const average = (good, neutral, bad) => (good - bad)/(good + neutral + bad)
-  const positive = (good, neutral, bad) => 100*good/(good + neutral + bad)
-
+const Person = ({ name, number }) => {
   return (
-    <div className="statistics">
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {good + neutral + bad}</p>
-      <p>average {average(good, neutral, bad)}</p>
-      <p>positive {positive(good, neutral, bad)}%</p>
-    </div>
+    <p>{name} {number}</p>
   )
 }
-
 const App = () => {
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const [persons, setPersons] = useState([
+    { name: 'Arto Hellas', number: '040-123456', id: 1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
+  ]) 
+
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+
+  const addPerson = (event) => {
+    event.preventDefault()
+    setPersons([...persons, { name: newName, number: newNumber }])
+    setNewName('')
+  }
 
   return (
-    <div className="app">
-      <h1>give feedback</h1>
-
-      <button onClick={() => setGood(good+1)}>good</button>
-      <button onClick={() => setNeutral(neutral+1)}>neutral</button>
-      <button onClick={() => setBad(bad+1)}>bad</button>
-
-      <h1>statistics</h1>
-      { good + neutral + bad > 0 ? 
-        <Statistics good={good} neutral={neutral} bad={bad} /> 
-        : <p>No feedback given</p>
+    <div>
+      <h2>Phonebook</h2>
+      <form onSubmit={addPerson}>
+        <div>
+          name: 
+          <input 
+            value={newName} 
+            onChange={
+              (event) => setNewName(event.target.value)
+            }
+          />
+        </div>
+        <div>
+          number:
+          <input 
+            value={newNumber} 
+            onChange={
+              (event) => setNewNumber(event.target.value)
+            }
+          />
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+      <h2>Numbers</h2>
+      {
+        persons.map(
+          (elem) => <Person name={elem.name} number={elem.number} key={elem.name}/>
+        )
       }
     </div>
   )
 }
+
 export default App
