@@ -18,6 +18,11 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault()
+
+    if (persons.find((elem) => elem.name === newName)) {
+      return alert(`${newName} already exists`)
+    }
+
     setPersons([...persons, { name: newName, number: newNumber }])
     setNewName('')
   }
