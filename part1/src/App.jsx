@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 
 import personService from './services/persons.js'
-import persons from './services/persons.js'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -24,25 +23,28 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
 
-    if (persons.find((elem) => elem.name === newName)) {
-      return alert(`${newName} already exists`)
+    let newPerson = { name: newName, number: newNumber }
+
+    const idx = persons.findIndex((elem) => elem.name === newName)
+
+    if (idx != -1) {
+      if (window.confirm(`${newName} already exists. replace number?`)) {
+        // newPerson = { ...newPerson, id: persons[idx].id }
+        personService.updatePerson(persons[idx].id, newPerson)
+        setPersons(persons.map((elem, index) => index == idx ? newPerson : elem))
+      }
     }
-
-    const newPerson = { name: newName, number: newNumber }
-
-    personService.create(newPerson)
+    else {
+      personService.create(newPerson)
       .then(
         (data) => {
           console.log(data)
           setPersons([...persons, data])
         }
       )
-      .then(
-        (res) => {
-          setNewName('')
-          setNewNumber('')
-        }
-      )
+    }
+    setNewName('')
+    setNewNumber('')
   }
 
   const handleDelete = (id) => {
@@ -90,7 +92,7 @@ const Persons = ({ persons, filter, handleDelete }) => {
             number={elem.number}
             id={elem.id}
             handleDelete={() => handleDelete(elem.id)}
-            key={elem.id} />
+            key={elem.name} />
         )
     }
   </>
