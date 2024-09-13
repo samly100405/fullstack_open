@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+import personService from './services/persons.js'
+import persons from './services/persons.js'
+
 const App = () => {
   const [persons, setPersons] = useState([])
 
@@ -9,10 +12,10 @@ const App = () => {
   const [filter, setFilter] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:3001/persons')
+    personService.getAll()
       .then(
-        (res) => {
-          setPersons(res.data)
+        (persons) => {
+          setPersons(persons)
         }
       )
 
@@ -27,21 +30,33 @@ const App = () => {
 
     const newPerson = { name: newName, number: newNumber }
 
-    axios.post('http://localhost:3001/persons', newPerson)
+    personService.create(newPerson)
+      .then(
+        (data) => {
+          console.log(data)
+          setPersons([...persons, data])
+        }
+      )
       .then(
         (res) => {
-          console.log(res);
-          setPersons([...persons, res.data])
           setNewName('')
           setNewNumber('')
         }
       )
-      .catch(
-        (err) => {
-          console.error(err);
+  }
+
+  const handleDelete = (id) => {
+    personService.deletePerson(id)
+      .then(
+        (res) => {
+          setPersons(
+            persons
+              .filter(
+                (elem) => elem.id !== res.id
+              )
+          )
         }
       )
-
   }
 
   return (
@@ -57,12 +72,12 @@ const App = () => {
       <h2>Filter</h2>
       <FilterInput value={filter} setValue={setFilter} />
       <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
+      <Persons persons={persons} filter={filter} handleDelete={handleDelete} />
     </div>
   )
 }
 
-const Persons = ({ persons, filter }) => {
+const Persons = ({ persons, filter, handleDelete }) => {
   return <>
     {
       persons
@@ -70,15 +85,23 @@ const Persons = ({ persons, filter }) => {
           (elem) => elem.name.toLowerCase().includes(filter.toLowerCase())
         )
         .map(
-          (elem) => <Person name={elem.name} number={elem.number} key={elem.name} />
+          (elem) => <Person
+            name={elem.name}
+            number={elem.number}
+            id={elem.id}
+            handleDelete={() => handleDelete(elem.id)}
+            key={elem.id} />
         )
     }
   </>
 }
 
-const Person = ({ name, number }) => {
+const Person = ({ name, number, handleDelete }) => {
   return (
-    <p>{name} {number}</p>
+    <div className="person">
+      <p>{name} {number}</p>
+      <button onClick={handleDelete}>delete</button>
+    </div>
   )
 }
 
