@@ -10,12 +10,12 @@ const App = () => {
 
   useEffect(() => {
     axios.get('http://localhost:3001/persons')
-    .then(
-      (res) => {
-        setPersons(res.data)
-      }
-    )
-    
+      .then(
+        (res) => {
+          setPersons(res.data)
+        }
+      )
+
   }, [])
 
   const addPerson = (event) => {
@@ -25,21 +25,35 @@ const App = () => {
       return alert(`${newName} already exists`)
     }
 
-    setPersons([...persons, { name: newName, number: newNumber }])
-    setNewName('')
-    setNewNumber('')
+    const newPerson = { name: newName, number: newNumber }
+
+    axios.post('http://localhost:3001/persons', newPerson)
+      .then(
+        (res) => {
+          console.log(res);
+          setPersons([...persons, res.data])
+          setNewName('')
+          setNewNumber('')
+        }
+      )
+      .catch(
+        (err) => {
+          console.error(err);
+        }
+      )
+
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <PersonForm 
-        handleSubmit={addPerson} 
+      <PersonForm
+        handleSubmit={addPerson}
         newName={newName}
         setNewName={setNewName}
         newNumber={newNumber}
-        setNewNumber={setNewNumber}/>
-        
+        setNewNumber={setNewNumber} />
+
       <h2>Filter</h2>
       <FilterInput value={filter} setValue={setFilter} />
       <h2>Numbers</h2>
