@@ -1,6 +1,53 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
+const App = () => {
+  const [persons, setPersons] = useState([])
+
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filter, setFilter] = useState('')
+
+  useEffect(() => {
+    axios.get('http://localhost:3001/persons')
+    .then(
+      (res) => {
+        setPersons(res.data)
+      }
+    )
+    
+  }, [])
+
+  const addPerson = (event) => {
+    event.preventDefault()
+
+    if (persons.find((elem) => elem.name === newName)) {
+      return alert(`${newName} already exists`)
+    }
+
+    setPersons([...persons, { name: newName, number: newNumber }])
+    setNewName('')
+    setNewNumber('')
+  }
+
+  return (
+    <div>
+      <h2>Phonebook</h2>
+      <PersonForm 
+        handleSubmit={addPerson} 
+        newName={newName}
+        setNewName={setNewName}
+        newNumber={newNumber}
+        setNewNumber={setNewNumber}/>
+        
+      <h2>Filter</h2>
+      <FilterInput value={filter} setValue={setFilter} />
+      <h2>Numbers</h2>
+      <Persons persons={persons} filter={filter} />
+    </div>
+  )
+}
+
 const Persons = ({ persons, filter }) => {
   return <>
     {
@@ -57,52 +104,6 @@ const PersonForm = ({ handleSubmit, newName, setNewName, newNumber, setNewNumber
         <button type="submit">add</button>
       </div>
     </form>
-  )
-}
-const App = () => {
-  const [persons, setPersons] = useState([])
-
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [filter, setFilter] = useState('')
-
-  useEffect(() => {
-    axios.get('http://localhost:3001/persons')
-    .then(
-      (res) => {
-        setPersons(res.data)
-      }
-    )
-    
-  }, [])
-
-  const addPerson = (event) => {
-    event.preventDefault()
-
-    if (persons.find((elem) => elem.name === newName)) {
-      return alert(`${newName} already exists`)
-    }
-
-    setPersons([...persons, { name: newName, number: newNumber }])
-    setNewName('')
-    setNewNumber('')
-  }
-
-  return (
-    <div>
-      <h2>Phonebook</h2>
-      <PersonForm 
-        handleSubmit={addPerson} 
-        newName={newName}
-        setNewName={setNewName}
-        newNumber={newNumber}
-        setNewNumber={setNewNumber}/>
-        
-      <h2>Filter</h2>
-      <FilterInput value={filter} setValue={setFilter} />
-      <h2>Numbers</h2>
-      <Persons persons={persons} filter={filter} />
-    </div>
   )
 }
 
