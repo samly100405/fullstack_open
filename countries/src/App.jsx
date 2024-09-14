@@ -7,6 +7,7 @@ function App() {
   const [userQuery, setUserQuery] = useState('')
   const [countries, setCountries] = useState([])
   const [displayedCountries, setDisplayedCountries] = useState([])
+  const [selectedCountry, setSelectedContry] = useState('')
 
   useEffect(() => {
     countriesService
@@ -40,13 +41,19 @@ function App() {
       />
       {displayedCountries.length > 10
         ? <p>Too many matches</p>
-        : displayedCountries.length > 1
-          ? displayedCountries.map(
-            (elem) => {
-              return <p key={elem.name.common}>{elem.name.common}</p>
-            }
-          )
-          : <DetailedCountry country={displayedCountries[0]} />
+        : displayedCountries.map(
+          (elem) => {
+            return (
+              <p key={elem.name.common}>
+                {elem.name.common} 
+                <button onClick={() => setSelectedContry(elem.name.common)}>show</button>
+              </p>
+            )
+          }
+        )
+      }
+      {
+        selectedCountry && <DetailedCountry country={displayedCountries.find((elem) => elem.name.common === selectedCountry)}/>
       }
     </>
   )
