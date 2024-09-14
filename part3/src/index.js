@@ -1,4 +1,4 @@
-import express from 'express'
+import express, { response } from 'express'
 
 const app = express()
 
@@ -44,10 +44,22 @@ app.get('/api/persons/:personID', (request, response) => {
     const person = persons.find((elem) => elem.id === personID)
 
     if (!person) {
-        return response.status(404).end()
+        return response.status(404).json({error: 'person not found'})
     }
 
     return response.json(person)
+})
+
+app.delete('/api/persons/:personID', (request, response) => {
+    const personID = request.params.personID
+    const person = persons.findIndex((elem) => elem.id === personID)
+
+    if (person == -1) {
+        return response.status(404).json({error: 'person not found'})
+    }
+
+    persons.splice(person, 1)
+    return response.json(persons)
 })
 
 const PORT = 3000
