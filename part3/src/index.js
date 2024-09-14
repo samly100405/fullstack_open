@@ -42,7 +42,11 @@ app.get('/api/persons', (request, response) => {
 
 app.post('/api/persons', (request, response) => {
   if (!request.body.name || !request.body.number) {
-    return response.status(400).json({ error: "missing name or number" })
+    return response.status(400).json({ error: 'missing name or number' })
+  }
+
+  if (persons.find((elem) => elem.name == request.body.name)) {
+    return response.status(400).json({ error: 'name must be unique'})
   }
 
   persons.push(
