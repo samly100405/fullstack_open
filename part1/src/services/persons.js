@@ -26,7 +26,6 @@ const deletePerson = (personID) => {
             .delete(`${baseUrl}/${personID}`)
             .then(
                 (res) => {
-                    console.log(res)
                     return res.data
                 }
             )
