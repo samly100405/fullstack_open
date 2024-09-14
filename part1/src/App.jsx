@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+
+import Persons from './components/Persons.jsx'
+import PersonForm from './components/PersonForm.jsx'
+import FilterInput from './components/FilterInput.jsx'
 
 import personService from './services/persons.js'
 
@@ -29,19 +32,18 @@ const App = () => {
 
     if (idx != -1) {
       if (window.confirm(`${newName} already exists. replace number?`)) {
-        // newPerson = { ...newPerson, id: persons[idx].id }
         personService.updatePerson(persons[idx].id, newPerson)
         setPersons(persons.map((elem, index) => index == idx ? newPerson : elem))
       }
     }
     else {
       personService.create(newPerson)
-      .then(
-        (data) => {
-          console.log(data)
-          setPersons([...persons, data])
-        }
-      )
+        .then(
+          (data) => {
+            console.log(data)
+            setPersons([...persons, data])
+          }
+        )
     }
     setNewName('')
     setNewNumber('')
@@ -50,14 +52,7 @@ const App = () => {
   const handleDelete = (id) => {
     personService.deletePerson(id)
       .then(
-        (res) => {
-          setPersons(
-            persons
-              .filter(
-                (elem) => elem.id !== res.id
-              )
-          )
-        }
+        (res) => setPersons(persons.filter(elem => elem.id !== res.id))
       )
   }
 
@@ -76,73 +71,6 @@ const App = () => {
       <h2>Numbers</h2>
       <Persons persons={persons} filter={filter} handleDelete={handleDelete} />
     </div>
-  )
-}
-
-const Persons = ({ persons, filter, handleDelete }) => {
-  return <>
-    {
-      persons
-        .filter(
-          (elem) => elem.name.toLowerCase().includes(filter.toLowerCase())
-        )
-        .map(
-          (elem) => <Person
-            name={elem.name}
-            number={elem.number}
-            id={elem.id}
-            handleDelete={() => handleDelete(elem.id)}
-            key={elem.name} />
-        )
-    }
-  </>
-}
-
-const Person = ({ name, number, handleDelete }) => {
-  return (
-    <div className="person">
-      <p>{name} {number}</p>
-      <button onClick={handleDelete}>delete</button>
-    </div>
-  )
-}
-
-const FilterInput = ({ value, setValue }) => {
-  return (
-    <div>
-      filter by:
-      <input
-        value={value}
-        onChange={(event) => setValue(event.target.value)} />
-    </div>
-  )
-}
-
-const PersonForm = ({ handleSubmit, newName, setNewName, newNumber, setNewNumber }) => {
-  return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        name:
-        <input
-          value={newName}
-          onChange={
-            (event) => setNewName(event.target.value)
-          }
-        />
-      </div>
-      <div>
-        number:
-        <input
-          value={newNumber}
-          onChange={
-            (event) => setNewNumber(event.target.value)
-          }
-        />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
   )
 }
 
