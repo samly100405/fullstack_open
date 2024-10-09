@@ -1,6 +1,5 @@
 import express from 'express'
 import morgan from 'morgan'
-import morgran from 'morgan'
 
 const app = express()
 app.use(express.json())
